@@ -8,7 +8,7 @@ async function sendSMS(phoneNumbers, otp) {
   const res = await fetch(url, {
     method: "post",
     headers: {
-      Authorization: process.env.SMS_API_KEY,
+      Authorization: process.env.FAST2SMS_API_KEY,
       Accept: "application/json",
     },
     body: JSON.stringify(body),
