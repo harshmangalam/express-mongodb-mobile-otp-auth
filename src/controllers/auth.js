@@ -1,58 +1,74 @@
 const User = require("../models/user");
+const { generateOTP } = require("../utils/otp");
+const { sendSMS } = require("../utils/sms");
 
 const signup = async (req, res, next) => {
-  // extract phone number from request body
-  const { phone } = req.body;
+  try {
+    // extract phone number from request body
+    const { phone } = req.body;
 
-  // check duplicate phone number
-  const user = await User.findOne({
-    phone,
-  });
+    // check duplicate phone number
+    const user = await User.findOne({
+      phone,
+    });
 
-  if (user) {
-    return next({ status: 400, message: "Phone number already exists" });
+    if (user) {
+      return next({ status: 400, message: "Phone number already exists" });
+    }
+
+    // create new user
+    const newUser = new User({
+      phone,
+    });
+
+    // generate 6 digit  otp
+    const otp = generateOTP(6);
+
+    // save otp in db
+
+    newUser.otp = otp;
+    await newUser.save();
+
+    // send otp
+
+    await sendSMS(phone, otp);
+
+    return res.status(201).json({
+      status: "success",
+      message: "6 digit otp sent on your phone number.",
+    });
+  } catch (error) {
+    next(error);
   }
-
-  // create new user
-  const newUser = new User({
-    phone,
-  });
-
-  await newUser.save();
-
-  // generate 6 digit  otp
-
-  // save otp in db
-
-  return res.status(201).json({
-    status: "success",
-    message: "6 digit otp sent on your phone number.",
-  });
 };
 
 const verifyOTP = async (req, res, next) => {
-  // extract otp and phone number from request body
-  const { phone, otp } = req.body;
+  try {
+    // extract otp and phone number from request body
+    const { phone, otp } = req.body;
 
-  // verify phone number exists or not
-  const user = await User.findOne({
-    phone,
-  });
+    // verify phone number exists or not
+    const user = await User.findOne({
+      phone,
+    });
 
-  if (!user) {
-    return next({ status: 400, message: "Phone number is incorrect" });
+    if (!user) {
+      return next({ status: 400, message: "Phone number is incorrect" });
+    }
+
+    // verify otp
+
+    if (user.otp !== otp) {
+      return next({ status: 400, message: "Incorrect OTP" });
+    }
+
+    return res.status(201).json({
+      status: "success",
+      message: "OTP verified successfully",
+    });
+  } catch (error) {
+    next(error);
   }
-
-  // verify otp
-
-  if (user.otp !== otp) {
-    return next({ status: 400, message: "Incorrect OTP" });
-  }
-
-  return res.status(201).json({
-    status: "success",
-    message: "OTP verified successfully",
-  });
 };
 
 module.exports = {
