@@ -16,6 +16,7 @@ app.get("/", (req, res) => {
   });
 });
 
+// register auth routes 
 app.use("/api/auth", authRoutes);
 
 async function main() {
