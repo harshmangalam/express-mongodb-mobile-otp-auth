@@ -62,6 +62,11 @@ const verifyOTP = async (req, res, next) => {
       return next({ status: 400, message: "Incorrect OTP" });
     }
 
+    // delete otp
+
+    user.otp = "";
+    await user.save();
+
     return res.status(201).json({
       status: "success",
       message: "OTP verified successfully",
