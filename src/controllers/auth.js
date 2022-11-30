@@ -27,13 +27,35 @@ const signup = async (req, res, next) => {
   return res.status(201).json({
     status: "success",
     message: "6 digit otp sent on your phone number.",
-    data: {
-      userId: newUser.id,
-    },
   });
 };
 
+const verifyOTP = async (req, res, next) => {
+  // extract otp and phone number from request body
+  const { phone, otp } = req.body;
 
-module.exports ={
-  signup
-}
+  // verify phone number exists or not
+  const user = await User.findOne({
+    phone,
+  });
+
+  if (!user) {
+    return next({ status: 400, message: "Phone number is incorrect" });
+  }
+
+  // verify otp
+
+  if (user.otp !== otp) {
+    return next({ status: 400, message: "Incorrect OTP" });
+  }
+
+  return res.status(201).json({
+    status: "success",
+    message: "OTP verified successfully",
+  });
+};
+
+module.exports = {
+  signup,
+  verifyOTP,
+};
