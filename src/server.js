@@ -1,6 +1,11 @@
+require("dotenv").config()
 const express = require("express");
 const { connectMongo } = require("./utils/mongo");
 const authRoutes = require("./routes/auth");
+const {
+  notFoundErrorHandler,
+  globalErrorHandler,
+} = require("./middlewares/error");
 const app = express();
 
 const PORT = 4000;
@@ -16,8 +21,14 @@ app.get("/", (req, res) => {
   });
 });
 
-// register auth routes 
+// register auth routes
 app.use("/api/auth", authRoutes);
+
+// api route not found error handling
+app.use("*", notFoundErrorHandler);
+
+//global error handler
+app.use(globalErrorHandler);
 
 async function main() {
   try {
