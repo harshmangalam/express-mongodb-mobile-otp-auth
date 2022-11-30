@@ -8,13 +8,7 @@ const schema = new Schema(
       unique: true,
       trim: true,
     },
-    password: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      minLength: 6,
-    },
+
     otp: String,
   },
   { timestamps: true }
