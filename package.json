@@ -1,0 +1,12 @@
+{
+  "name": "mobile-otp-auth",
+  "version": "1.0.0",
+  "description": "Mobile otp based authentication and authorization with nodejs and mongodb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Harsh Mangalam",
+  "license": "MIT"
+}
