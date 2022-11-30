@@ -1,4 +1,5 @@
 const express = require("express");
+const { connectMongo } = require("./utils/mongo");
 
 const app = express();
 
@@ -15,4 +16,14 @@ app.get("/", (req, res) => {
   });
 });
 
-app.listen(PORT, () => console.log(`listening on port ${PORT}`));
+async function main() {
+  try {
+    await connectMongo();
+    // start express server 
+    app.listen(PORT, () => console.log(`listening on port ${PORT}`));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+main();
